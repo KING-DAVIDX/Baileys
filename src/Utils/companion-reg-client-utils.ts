@@ -27,6 +27,10 @@ export const getCompanionWebClientType = ([os, browserName]: WABrowserDescriptio
 		return os === 'Windows' ? CompanionWebClientType.UWP : CompanionWebClientType.ELECTRON
 	}
 
+	if (browserName === 'AndroidBusiness') {
+		return CompanionWebClientType.CHROME
+	}
+
 	return BROWSER_TO_COMPANION_WEB_CLIENT[browserName] || CompanionWebClientType.OTHER_WEB_CLIENT
 }
 

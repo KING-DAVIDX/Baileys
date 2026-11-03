@@ -14,15 +14,21 @@ import { encodeBigEndian } from './generics'
 import { createSignalIdentity } from './signal'
 
 const getUserAgent = (config: SocketConfig): proto.ClientPayload.IUserAgent => {
+	const browserFlavor = config.browser[1].toLocaleLowerCase()
+	const platform =
+		browserFlavor === 'androidbusiness'
+			? proto.ClientPayload.UserAgent.Platform.SMB_ANDROID
+			: browserFlavor.includes('android')
+				? proto.ClientPayload.UserAgent.Platform.ANDROID
+				: proto.ClientPayload.UserAgent.Platform.WEB
+
 	return {
 		appVersion: {
 			primary: config.version[0],
 			secondary: config.version[1],
 			tertiary: config.version[2]
 		},
-		platform: config.browser[1].toLocaleLowerCase().includes('android')
-			? proto.ClientPayload.UserAgent.Platform.ANDROID
-			: proto.ClientPayload.UserAgent.Platform.WEB,
+		platform,
 		releaseChannel: proto.ClientPayload.UserAgent.ReleaseChannel.RELEASE,
 		osVersion: '0.1',
 		device: 'Desktop',
@@ -60,7 +66,7 @@ const getClientPayload = (config: SocketConfig) => {
 		userAgent: getUserAgent(config)
 	}
 
-	if (!config.browser[1].toLocaleLowerCase().includes('android')) {
+	if (config.browser[1].toLocaleLowerCase() !== 'android') {
 		payload.webInfo = getWebInfo(config)
 	}
 
@@ -87,7 +93,7 @@ export const generateLoginNode = (userJid: string, config: SocketConfig): proto.
 
 const getPlatformType = (platform: string): proto.DeviceProps.PlatformType => {
 	const platformType = platform.toUpperCase()
-	if (platformType === 'ANDROID') {
+	if (platformType === 'ANDROID' || platformType === 'ANDROIDBUSINESS') {
 		return proto.DeviceProps.PlatformType.ANDROID_PHONE
 	}
 
