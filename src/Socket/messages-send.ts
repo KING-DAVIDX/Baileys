@@ -30,6 +30,7 @@ import {
 	getStatusCodeForMediaRetry,
 	getUrlFromDirectPath,
 	getWAUploadToServer,
+	isViewOnceMessage,
 	MessageRetryManager,
 	normalizeMessageContent,
 	parseAndInjectE2ESessions,
@@ -1030,6 +1031,10 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 				logger.debug({ jid }, 'adding device identity')
 			}
 
+			if (isViewOnceMessage(message)) {
+				;(stanza.content as BinaryNode[]).push({ tag: 'meta', attrs: { view_once: 'true' } })
+			}
+
 			if (
 				!isNewsletter &&
 				!isRetryResend &&
@@ -1180,6 +1185,14 @@ export const makeMessagesSocket = (config: SocketConfig) => {
 	}
 
 	const getMediaType = (message: proto.IMessage) => {
+		const inner =
+			message.viewOnceMessage?.message ||
+			message.viewOnceMessageV2?.message ||
+			message.viewOnceMessageV2Extension?.message
+		if (inner) {
+			return getMediaType(inner)
+		}
+
 		if (message.imageMessage) {
 			return 'image'
 		} else if (message.videoMessage) {

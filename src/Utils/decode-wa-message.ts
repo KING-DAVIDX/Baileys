@@ -357,6 +357,16 @@ export const decryptMessageNode = (
 						} else {
 							fullMessage.message = msg
 						}
+
+						const viewOnceInner =
+							msg.viewOnceMessage?.message || msg.viewOnceMessageV2?.message || msg.viewOnceMessageV2Extension?.message
+						if (
+							viewOnceInner?.imageMessage?.viewOnce ||
+							viewOnceInner?.videoMessage?.viewOnce ||
+							viewOnceInner?.audioMessage?.viewOnce
+						) {
+							fullMessage.key.isViewOnce = true
+						}
 					} catch (err: any) {
 						const errorContext = {
 							key: fullMessage.key,
