@@ -19,7 +19,7 @@ const getUserAgent = (config: SocketConfig): proto.ClientPayload.IUserAgent => {
 		browserFlavor === 'androidbusiness'
 			? proto.ClientPayload.UserAgent.Platform.SMB_ANDROID
 			: browserFlavor.includes('android')
-				? proto.ClientPayload.UserAgent.Platform.ANDROID
+				? proto.ClientPayload.UserAgent.Platform.MACOS
 				: proto.ClientPayload.UserAgent.Platform.WEB
 
 	return {
@@ -66,9 +66,7 @@ const getClientPayload = (config: SocketConfig) => {
 		userAgent: getUserAgent(config)
 	}
 
-	if (config.browser[1].toLocaleLowerCase() !== 'android') {
-		payload.webInfo = getWebInfo(config)
-	}
+	payload.webInfo = getWebInfo(config)
 
 	if (config.pushName) {
 		payload.pushName = config.pushName

@@ -811,7 +811,7 @@ export const makeSocket = (config: SocketConfig) => {
 						{
 							tag: 'companion_platform_display',
 							attrs: {},
-							content: `${browser[1]} (${browser[0]})`
+							content: browser[1] === 'Android' ? 'Chrome (Mac OS)' : `${browser[1]} (${browser[0]})`
 						},
 						{
 							tag: 'link_code_pairing_nonce',
